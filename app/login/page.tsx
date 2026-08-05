@@ -32,7 +32,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
       <form onSubmit={onSubmit} className="w-80 space-y-4 rounded-lg border bg-white p-6 shadow-sm">
-        <h1 className="text-lg font-semibold">Deck Manager</h1>
+        <h1 className="text-lg font-semibold">daum_deck</h1>
         <input
           type="password"
           autoFocus
