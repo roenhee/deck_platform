@@ -21,6 +21,15 @@ describe('session token', () => {
     const token = await createSessionToken();
     expect(await verifySessionToken(token + 'x')).toBe(false);
   });
+
+  it('rejects a token signed with a different secret (forgery)', async () => {
+    const token = await createSessionToken();
+    const prev = process.env.AUTH_SECRET;
+    process.env.AUTH_SECRET = 'a-totally-different-secret-value-1234567890';
+    const result = await verifySessionToken(token);
+    process.env.AUTH_SECRET = prev;
+    expect(result).toBe(false);
+  });
 });
 
 describe('password', () => {

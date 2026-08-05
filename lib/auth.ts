@@ -20,7 +20,7 @@ export async function createSessionToken(): Promise<string> {
 export async function verifySessionToken(token: string | undefined): Promise<boolean> {
   if (!token) return false;
   try {
-    await jwtVerify(token, secret());
+    await jwtVerify(token, secret(), { algorithms: ['HS256'] });
     return true;
   } catch {
     return false;
