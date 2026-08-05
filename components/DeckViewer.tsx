@@ -3,9 +3,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function DeckViewer({ id, title }: { id: string; title: string }) {
+export default function DeckViewer({
+  id,
+  title,
+  folderId,
+}: {
+  id: string;
+  title: string;
+  folderId: string | null;
+}) {
   const ref = useRef<HTMLIFrameElement>(null);
   const router = useRouter();
+  const backHref = folderId ? `/?folderId=${folderId}` : '/';
   const [barVisible, setBarVisible] = useState(true);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -42,7 +51,7 @@ export default function DeckViewer({ id, title }: { id: string; title: string })
           barVisible ? 'opacity-100' : 'pointer-events-none opacity-0'
         }`}
       >
-        <button onMouseDown={noFocusSteal} onClick={() => router.push('/')} className="hover:underline">← 뒤로</button>
+        <button onMouseDown={noFocusSteal} onClick={() => router.push(backHref)} className="hover:underline">← 뒤로</button>
         <span className="min-w-0 flex-1 truncate text-sm">{title}</span>
         <a onMouseDown={noFocusSteal} href={`/api/decks/${id}/download`} className="hover:underline">다운로드</a>
         <button onMouseDown={noFocusSteal} onClick={goFullscreen} className="hover:underline">전체화면</button>
