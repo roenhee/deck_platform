@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import type { Folder, TreeNode } from '@/lib/types';
 import { buildTree } from '@/lib/tree';
 
+const DECK_DND_TYPE = 'application/x-deck-id';
+
 export default function FolderTree({
   folders,
   currentId,
@@ -56,9 +58,30 @@ export default function FolderTree({
     router.refresh();
   }
 
+  async function moveDeckToFolder(deckId: string, folderId: string | null) {
+    const res = await fetch(`/api/decks/${deckId}`, {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ folderId }),
+    });
+    if (!res.ok) {
+      alert('이동 실패');
+      return;
+    }
+    router.refresh();
+  }
+
   return (
     <aside className="w-64 shrink-0 overflow-y-auto border-r bg-gray-50 p-2 text-sm">
-      <div className="flex items-center justify-between px-2 py-1">
+      <div
+        className="flex items-center justify-between rounded px-2 py-1"
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+          e.preventDefault();
+          const deckId = e.dataTransfer.getData(DECK_DND_TYPE);
+          if (deckId) moveDeckToFolder(deckId, null);
+        }}
+      >
         <Link href="/" className={`font-medium ${currentId === null ? 'text-black' : 'text-gray-600'}`}>
           📁 루트
         </Link>
@@ -74,6 +97,7 @@ export default function FolderTree({
             onCreate={createFolder}
             onRename={renameFolder}
             onDelete={deleteFolder}
+            onDropDeck={moveDeckToFolder}
           />
         ))}
       </ul>
@@ -88,6 +112,7 @@ function FolderRow({
   onCreate,
   onRename,
   onDelete,
+  onDropDeck,
 }: {
   node: TreeNode;
   depth: number;
@@ -95,6 +120,7 @@ function FolderRow({
   onCreate: (parentId: string | null) => void;
   onRename: (folder: Folder) => void;
   onDelete: (folder: Folder) => void;
+  onDropDeck: (deckId: string, folderId: string | null) => void;
 }) {
   const [open, setOpen] = useState(true);
   const hasChildren = node.children.length > 0;
@@ -106,6 +132,12 @@ function FolderRow({
           currentId === node.id ? 'bg-gray-200 font-medium' : ''
         }`}
         style={{ paddingLeft: `${depth * 12 + 8}px` }}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+          e.preventDefault();
+          const deckId = e.dataTransfer.getData(DECK_DND_TYPE);
+          if (deckId) onDropDeck(deckId, node.id);
+        }}
       >
         <button
           onClick={() => setOpen((v) => !v)}
@@ -133,6 +165,7 @@ function FolderRow({
               onCreate={onCreate}
               onRename={onRename}
               onDelete={onDelete}
+              onDropDeck={onDropDeck}
             />
           ))}
         </ul>

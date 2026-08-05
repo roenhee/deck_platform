@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import type { Deck, Folder } from '@/lib/types';
 import MoveDialog from '@/components/MoveDialog';
 
+const DECK_DND_TYPE = 'application/x-deck-id';
+
 export default function DeckGrid({
   decks,
   folders,
@@ -51,8 +53,16 @@ export default function DeckGrid({
   return (
     <div className="grid flex-1 grid-cols-[repeat(auto-fill,minmax(200px,1fr))] content-start gap-4 overflow-y-auto p-4">
       {decks.map((deck) => (
-        <div key={deck.id} className="group flex flex-col rounded-lg border bg-white p-3 shadow-sm">
-          <Link href={`/deck/${deck.id}`} className="mb-2 flex h-24 items-center justify-center rounded bg-gray-100 text-3xl">
+        <div
+          key={deck.id}
+          draggable
+          onDragStart={(e) => {
+            e.dataTransfer.setData(DECK_DND_TYPE, deck.id);
+            e.dataTransfer.effectAllowed = 'move';
+          }}
+          className="group flex cursor-grab flex-col rounded-lg border bg-white p-3 shadow-sm active:cursor-grabbing"
+        >
+          <Link href={`/deck/${deck.id}`} draggable={false} className="mb-2 flex h-24 items-center justify-center rounded bg-gray-100 text-3xl">
             🖥
           </Link>
           <div className="truncate text-sm font-medium" title={deck.title}>{deck.title}</div>
