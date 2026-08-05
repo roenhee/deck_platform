@@ -27,14 +27,20 @@ export default function DeckGrid({
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ title }),
     });
-    if (!res.ok) alert('변경 실패');
+    if (!res.ok) {
+      alert('변경 실패');
+      return;
+    }
     router.refresh();
   }
 
   async function remove(deck: Deck) {
     if (!window.confirm(`"${deck.title}" 덱을 삭제할까요?`)) return;
     const res = await fetch(`/api/decks/${deck.id}`, { method: 'DELETE' });
-    if (!res.ok) alert('삭제 실패');
+    if (!res.ok) {
+      alert('삭제 실패');
+      return;
+    }
     router.refresh();
   }
 

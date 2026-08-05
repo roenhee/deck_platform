@@ -14,7 +14,7 @@ export default async function Home({
   searchParams: Promise<{ folderId?: string }>;
 }) {
   const { folderId } = await searchParams;
-  const current = folderId ?? null;
+  const current = folderId || null;
   const sb = supabaseAdmin();
 
   const foldersQuery = sb.from('folders').select('*').order('name');

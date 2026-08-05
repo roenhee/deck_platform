@@ -24,7 +24,10 @@ export default function FolderTree({
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ name, parentId }),
     });
-    if (!res.ok) alert('생성 실패 (이름 중복일 수 있음)');
+    if (!res.ok) {
+      alert('생성 실패 (이름 중복일 수 있음)');
+      return;
+    }
     router.refresh();
   }
 
@@ -36,14 +39,20 @@ export default function FolderTree({
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ name }),
     });
-    if (!res.ok) alert('변경 실패');
+    if (!res.ok) {
+      alert('변경 실패');
+      return;
+    }
     router.refresh();
   }
 
   async function deleteFolder(folder: Folder) {
     if (!window.confirm(`"${folder.name}" 폴더를 삭제할까요? 하위 폴더도 함께 삭제되고, 덱은 루트로 이동합니다.`)) return;
     const res = await fetch(`/api/folders/${folder.id}`, { method: 'DELETE' });
-    if (!res.ok) alert('삭제 실패');
+    if (!res.ok) {
+      alert('삭제 실패');
+      return;
+    }
     router.refresh();
   }
 

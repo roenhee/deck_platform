@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin, storagePathFor } from '@/lib/supabase';
 
 export const runtime = 'nodejs';
 
@@ -13,21 +13,18 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
-  const { title, folderId, deckId, storagePath, originalFilename, fileSize } = body ?? {};
-  if (
-    typeof title !== 'string' || !title.trim() ||
-    typeof deckId !== 'string' ||
-    typeof storagePath !== 'string'
-  ) {
+  const { title, folderId, deckId, originalFilename, fileSize } = body ?? {};
+  if (typeof title !== 'string' || !title.trim() || typeof deckId !== 'string') {
     return NextResponse.json({ error: 'invalid payload' }, { status: 400 });
   }
+  // storage_path는 클라이언트 값을 신뢰하지 않고 서버가 deckId로 재도출한다.
   const { data, error } = await supabaseAdmin()
     .from('decks')
     .insert({
       id: deckId,
       title: title.trim(),
-      folder_id: folderId ?? null,
-      storage_path: storagePath,
+      folder_id: folderId || null,
+      storage_path: storagePathFor(deckId),
       original_filename: originalFilename ?? null,
       file_size: fileSize ?? null,
     })
