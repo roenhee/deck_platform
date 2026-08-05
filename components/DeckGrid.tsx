@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { Deck, Folder } from '@/lib/types';
+import MoveDialog from '@/components/MoveDialog';
 
 export default function DeckGrid({
   decks,
@@ -14,6 +16,8 @@ export default function DeckGrid({
   currentId: string | null;
 }) {
   const router = useRouter();
+  const [movingDeck, setMovingDeck] = useState<Deck | null>(null);
+  void currentId; // 현재 폴더 컨텍스트 — 향후 사용 예정, 지금은 그리드에서 직접 쓰지 않음
 
   async function rename(deck: Deck) {
     const title = window.prompt('제목 변경', deck.title);
@@ -50,10 +54,14 @@ export default function DeckGrid({
             <Link href={`/deck/${deck.id}`} className="hover:text-black">열기</Link>
             <a href={`/api/decks/${deck.id}/download`} className="hover:text-black">다운로드</a>
             <button onClick={() => rename(deck)} className="hover:text-black">이름변경</button>
+            <button onClick={() => setMovingDeck(deck)} className="hover:text-black">이동</button>
             <button onClick={() => remove(deck)} className="hover:text-black">삭제</button>
           </div>
         </div>
       ))}
+      {movingDeck && (
+        <MoveDialog deckId={movingDeck.id} folders={folders} onClose={() => setMovingDeck(null)} />
+      )}
     </div>
   );
 }
