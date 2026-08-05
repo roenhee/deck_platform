@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     .createSignedUploadUrl(path);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  // data.signedUrl은 경로. 절대 URL로 만들어 클라이언트가 raw PUT 할 수 있게 한다(anon key 불필요).
-  const uploadUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}${data.signedUrl}`;
-  return NextResponse.json({ deckId, path, uploadUrl });
+  // data.signedUrl은 이미 절대 URL(https://.../storage/v1/object/upload/sign/...?token=...)이다.
+  // 클라이언트는 이 URL로 anon key 없이 raw PUT 업로드가 가능하다.
+  return NextResponse.json({ deckId, path, uploadUrl: data.signedUrl });
 }
