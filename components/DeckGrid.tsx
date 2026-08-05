@@ -67,8 +67,8 @@ export default function DeckGrid({
           </Link>
           <div className="truncate text-sm font-medium" title={deck.title}>{deck.title}</div>
           <div className="mt-2 flex flex-wrap gap-2 text-xs text-gray-500">
-            <Link href={`/deck/${deck.id}`} className="hover:text-black">열기</Link>
-            <a href={`/api/decks/${deck.id}/download`} className="hover:text-black">다운로드</a>
+            <Link href={`/deck/${deck.id}`} draggable={false} className="hover:text-black">열기</Link>
+            <a href={`/api/decks/${deck.id}/download`} draggable={false} className="hover:text-black">다운로드</a>
             <button onClick={() => rename(deck)} className="hover:text-black">이름변경</button>
             <button onClick={() => setMovingDeck(deck)} className="hover:text-black">이동</button>
             <button onClick={() => remove(deck)} className="hover:text-black">삭제</button>

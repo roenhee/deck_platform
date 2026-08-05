@@ -12,7 +12,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (!body.title.trim()) return NextResponse.json({ error: 'title empty' }, { status: 400 });
     patch.title = body.title.trim();
   }
-  if ('folderId' in (body ?? {})) patch.folder_id = body.folderId ?? null;
+  if ('folderId' in (body ?? {})) patch.folder_id = body.folderId || null;
 
   if (Object.keys(patch).length === 1) {
     return NextResponse.json({ error: 'nothing to update' }, { status: 400 });
